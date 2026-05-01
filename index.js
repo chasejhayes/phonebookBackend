@@ -76,7 +76,7 @@ function generateID(){
     return String(Math.floor(getID(1, 1000)))
 }
 
-app.post("/api/people", (request, response) => {
+app.post("/api/persons", (request, response) => {
     const body = request.body
 
 
