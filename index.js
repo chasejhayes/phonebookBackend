@@ -1,3 +1,5 @@
+require("dotenv").config()
+
 const express = require("express")
 const morgan = require("morgan")
 const cors = require("cors")
@@ -41,23 +43,29 @@ app.get("/", (request, response) => {
     response.send("<h1>Phonebook</h1>")
 })
 
-app.get("/api/persons", (request, response) => {
+app.get("/api/people", (request, response) => {
     Person.find({}).then(people => {
         response.json(people)
     })
 })
 
-// const number = people.length;
-// const date = Date().toLocaleString()
+const number = people.length;
+const date = Date().toLocaleString()
 
 
 
-// app.get("/info", (request, response) => {
-//     response.send(`<p>The Phonebook has ${number} people.</p>
-//     <p>${date}</p>`
-//     )
+app.get("/info", (request, response) => {
+    response.send(`<p>The Phonebook has ${number} people.</p>
+    <p>${date}</p>`
+    )
 
-// })
+})
+
+app.get("/api/people/:id", (request, response) => {
+    Person.findById(request.params.id).then(person => {
+        response.json(person)
+    })
+})
 
 // app.get("/api/people/:id", (request, response) => {
 //     const id = request.params.id
@@ -69,12 +77,12 @@ app.get("/api/persons", (request, response) => {
 //     }
 // })
 
-// app.delete("/api/people/:id", (request, response) => {
-//     const id = request.params.id
-//     people = people.filter(person => person.id !== id)
+app.delete("/api/people/:id", (request, response) => {
+    const id = request.params.id
+    people = people.filter(person => person.id !== id)
 
-//     response.status(204).end()
-// })
+    response.status(204).end()
+})
 
 // function getID(min, max){
 //     return Math.random() * (max - min) + min
@@ -82,6 +90,20 @@ app.get("/api/persons", (request, response) => {
 // function generateID(){
 //     return String(Math.floor(getID(1, 1000)))
 // }
+
+app.post("/api/people", (request, response)=> {
+    const body = request.body
+    if (!body.name || !body.number){
+        return response.status(400).json({error:"content missing"})
+    }
+
+    const person = new Person({
+        name: body.name,
+        number: body.number
+    })
+
+    person.save().then(savedPerson => {response.json(savedPerson)})
+})
 
 // app.post("/api/persons", (request, response) => {
 //     const body = request.body
@@ -125,7 +147,7 @@ app.get("/api/persons", (request, response) => {
 
 
 
-const PORT = process.env.PORT || 3002
+const PORT = process.env.PORT
 app.listen(PORT, () => {
     console.log("Server running")
 })
