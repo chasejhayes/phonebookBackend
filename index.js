@@ -1,8 +1,13 @@
 const express = require("express")
 const morgan = require("morgan")
 const cors = require("cors")
+const Person = require("./models/person.js")
 
 const app = express()
+
+
+
+
 
 app.use(express.json())
 app.use(morgan(":method :url :status :res[content-length] - :response-time ms"))
@@ -37,89 +42,88 @@ app.get("/", (request, response) => {
 })
 
 app.get("/api/persons", (request, response) => {
-    response.json(people)
+    Person.find({}).then(people => {
+        response.json(people)
+    })
 })
 
-const number = people.length;
-const date = Date().toLocaleString()
+// const number = people.length;
+// const date = Date().toLocaleString()
 
 
 
-app.get("/info", (request, response) => {
-    response.send(`<p>The Phonebook has ${number} people.</p>
-    <p>${date}</p>`
-    )
+// app.get("/info", (request, response) => {
+//     response.send(`<p>The Phonebook has ${number} people.</p>
+//     <p>${date}</p>`
+//     )
 
-})
+// })
 
-app.get("/api/people/:id", (request, response) => {
-    const id = request.params.id
-    const person = people.find(person => person.id === id)
-    if (person) {
-        response.json(person)
-    } else {
-        response.status(404).end()
-    }
-})
+// app.get("/api/people/:id", (request, response) => {
+//     const id = request.params.id
+//     const person = people.find(person => person.id === id)
+//     if (person) {
+//         response.json(person)
+//     } else {
+//         response.status(404).end()
+//     }
+// })
 
-app.delete("/api/people/:id", (request, response) => {
-    const id = request.params.id
-    people = people.filter(person => person.id !== id)
+// app.delete("/api/people/:id", (request, response) => {
+//     const id = request.params.id
+//     people = people.filter(person => person.id !== id)
 
-    response.status(204).end()
-})
+//     response.status(204).end()
+// })
 
-function getID(min, max){
-    return Math.random() * (max - min) + min
-}
-function generateID(){
-    return String(Math.floor(getID(1, 1000)))
-}
+// function getID(min, max){
+//     return Math.random() * (max - min) + min
+// }
+// function generateID(){
+//     return String(Math.floor(getID(1, 1000)))
+// }
 
-app.post("/api/persons", (request, response) => {
-    const body = request.body
+// app.post("/api/persons", (request, response) => {
+//     const body = request.body
 
 
-    if (!body.number && !body.name){
-        return response.status(400).json({
-            error: "Missing name and number"
-        })
-    }
-    else if (!body.name){
-        return response.status(400).json({
-            error: "Missing name"
-        })
+//     if (!body.number && !body.name){
+//         return response.status(400).json({
+//             error: "Missing name and number"
+//         })
+//     }
+//     else if (!body.name){
+//         return response.status(400).json({
+//             error: "Missing name"
+//         })
         
-    }
-    else if (!body.number){
-        return response.status(400).json({
-            error: "Missing number"
-        })
-    }
-    else if (people.find(person => person.name ===body.name)){
-         return response.status(400).json({
-            error: "Already in phone book"
-        })
-    }
-    // const person = people.find(person => person.id === id)
+//     }
+//     else if (!body.number){
+//         return response.status(400).json({
+//             error: "Missing number"
+//         })
+//     }
+//     else if (people.find(person => person.name ===body.name)){
+//          return response.status(400).json({
+//             error: "Already in phone book"
+//         })
+//     }
     
     
-    const person = {
-        name: body.name,
-        number: body.number,
-        id: generateID()
+//     const person = {
+//         name: body.name,
+//         number: body.number,
+//         id: generateID()
 
-    }
+//     }
 
-    people = people.concat(person)
+//     people = people.concat(person)
+
+//     response.json(person)
+// })
 
 
 
-    // console.log(person)
-    response.json(person)
-})
-
- 
 
 const PORT = process.env.PORT || 3002
 app.listen(PORT, () => {
