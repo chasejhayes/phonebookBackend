@@ -15,7 +15,8 @@ mongoose.connect(url, { family: 4 })
 
 const personSchema = new mongoose.Schema({
     name: String,
-    number: Number
+    number: Number,
+    
 })
 
 personSchema.set("toJSON", {

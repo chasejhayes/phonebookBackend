@@ -77,11 +77,19 @@ app.get("/api/people/:id", (request, response) => {
 //     }
 // })
 
-app.delete("/api/people/:id", (request, response) => {
-    const id = request.params.id
-    people = people.filter(person => person.id !== id)
+// app.delete("/api/people/:id", (request, response) => {
+//     const id = request.params.id
+//     people = people.filter(person => person.id !== id)
 
-    response.status(204).end()
+//     response.status(204).end()
+// })
+
+app.delete("/api/people/:id", (request, response, next)=> {
+    Person.findByIdAndDelete(request.params.id)
+    .then(result => {
+        response.status(204).end()
+    })
+    .catch(error => next(error))
 })
 
 // function getID(min, max){
@@ -99,7 +107,8 @@ app.post("/api/people", (request, response)=> {
 
     const person = new Person({
         name: body.name,
-        number: body.number
+        number: body.number,
+        // id: generateID()
     })
 
     person.save().then(savedPerson => {response.json(savedPerson)})
